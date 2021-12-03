@@ -34,25 +34,39 @@ class ReadConfig:
             print(f"Exception raised while reading config file: {exp}")
 
 
-class GetTicketJson(ReadConfig):
+class GetTicketJson():
 
-    def get_all_tickets_json(self, limit_per_page, page=1):
+    def __init__(self):
+        self.read_config_object = ReadConfig()
+
+
+    def get_all_tickets_json(self, limit_per_page, page_specific_url=None):
         try:
-            config_dict = self.read_config_information()
-            _get_all_tickets_url  = f"https://{config_dict['subdomain']}.zendesk.com/api/v2/tickets.json?page[size]={limit_per_page}"
+            config_dict = self.read_config_object.read_config_information()
+            _get_all_tickets_url_initial  = f"https://{config_dict['subdomain']}.zendesk.com/api/v2/tickets.json?page[size]={limit_per_page}"
             _api_auth = config_dict["user"], config_dict["psd"]
-            response = requests.get(url=_get_all_tickets_url, auth=_api_auth)
+
+            # url for next and previous pages 
+            if page_specific_url is not None:
+                url = page_specific_url
+            else:
+                url = _get_all_tickets_url_initial
+
+            response = requests.get(url=url, auth=_api_auth)
 
             if response.status_code == 200:
                 data = json.loads(response.text)
                 return data
             elif response.status_code == 404:
-                print("Requested URL not found")
+                print("Requested records not found")
+                return 404
             elif response.status_code == 400:
                 print("Unauthorized, please check if your credentials are correct")
+                return 400
             else:
                 print("Request failed. Please check and try again\n")
                 time.sleep(3)
+
 
         except Exception as exp:
             print(f"Exception raised while calling Zendesk API: {exp}")
@@ -64,7 +78,7 @@ class GetTicketJson(ReadConfig):
         :return: data of the json returned
         """
         try:
-            config_dict = self.read_config_information()
+            config_dict = self.read_config_object.read_config_information()
             _get_all_tickets_url = f"https://{config_dict['subdomain']}.zendesk.com/api/v2/tickets/{id}.json"
             _api_auth = config_dict["user"], config_dict["psd"]
             response = requests.get(url=_get_all_tickets_url, auth=_api_auth)
@@ -73,9 +87,11 @@ class GetTicketJson(ReadConfig):
                 data = json.loads(response.text)
                 return data
             elif response.status_code == 404:
-                print("Requested URL not found")
+                print("Requested record not found")
+                return 404
             elif response.status_code == 400:
                 print("Unauthorized, please check if your credentials are correct")
+                return 400
             else:
                 print("Request failed. Please check and try again\n")
                 time.sleep(3)
