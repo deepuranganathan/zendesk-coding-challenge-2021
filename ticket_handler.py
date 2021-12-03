@@ -16,8 +16,8 @@ class Ticket:
 
         self.re_entry_title = f"""
         \n {6*"="} Do you want to initiate the search again {5*"="} \n
-        1. Yes ( 1 for searchign again) 
-        2. No (2 to go to initial page)
+        1. Yes ( 1 for searching again) 
+        2. No (2 to go to home page of the viewer)
         3. Quit q or Q or 3 to quit from the ticket viewer
         """
 

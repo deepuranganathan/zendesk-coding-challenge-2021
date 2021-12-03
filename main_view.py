@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 
-from model_tickets import Ticket
+from ticket_handler import Ticket
 import os
 import time
 
@@ -48,13 +48,13 @@ class MainMenu():
                     os.system('clear')
 
                     # calls get_all_tickets from tickets.py file to receive all tickets
-                    tickets.get_all_tickets()
+                    tickets.get_paged_tickets()
 
                 elif choice == "2":
                     os.system('clear')
 
                     # calls get_ticket from tickets.py file to get a single ticket
-                    tickets.get_ticket()
+                    tickets.get_specific_ticket_handler()
 
                 elif choice in ("3", "q", "Q"):
                     print(self.quit_message)
