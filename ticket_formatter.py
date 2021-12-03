@@ -44,7 +44,7 @@ class GetTicketJson:
     def get_all_tickets_json(self, limit_per_page, page_specific_url=None):
         try:
             config_dict = self.read_config_object.read_config_information()
-            _get_all_tickets_url_initial  = f"https://{config_dict['subdomain']}.zendesk.com/api/v2/tickets.json?page[size]={limit_per_page}"
+            _get_all_tickets_url_initial = f"https://{config_dict['subdomain']}.zendesk.com/api/v2/tickets.json?page[size]={limit_per_page}"
             _api_auth = config_dict["user"], config_dict["psd"]
 
             # url for next and previous pages 
