@@ -57,54 +57,59 @@ class Ticket:
         Get the specific ticket from the user and display its details in a formatted way
         :return:
         """
-        while True:
-            print("\n Please enter the ticket ID to fetch the specific ticket\n")
-            ticket_id = input("Enter the Ticket ID to fetch the values: ")
+        try:
 
-            # check if the number entered is an integer
-            # characters/strings are not allowed
+            while True:
+                print("\n Please enter the ticket ID to fetch the specific ticket\n")
+                ticket_id = input("Enter the Ticket ID to fetch the values: ")
 
-            try:
-                ticket_id_num = int(ticket_id)
-            except ValueError:
-                print("Enter number only \n")
-                continue
+                # check if the number entered is an integer
+                # characters/strings are not allowed
 
-            specific_ticket_data = self.get_json_token_obj.get_specific_ticket_json(ticket_id)
+                try:
+                    ticket_id_num = int(ticket_id)
+                except ValueError:
+                    print("Enter number only \n")
+                    continue
 
-            if specific_ticket_data == 404:
-                print("Please enter an appropriate ticket id\n")
-                continue
-            elif specific_ticket_data == 400:
-                print("Check the auth credentials")
-                break
+                specific_ticket_data = self.get_json_token_obj.get_specific_ticket_json(ticket_id)
 
-            specific_ticket_entry = specific_ticket_data.get('ticket', None)
-            if specific_ticket_entry:
-                print(self.title)
-                self.show_ticket(specific_ticket_entry)
-            else:
-                print("Weren't able to fetch specific ticket entry. Please try again\n")
+                if specific_ticket_data == 404:
+                    print("Please enter an appropriate ticket id\n")
+                    continue
+                elif specific_ticket_data == 401:
+                    print("Check the auth credentials")
+                    break
+
+                specific_ticket_entry = specific_ticket_data.get('ticket', None)
+                if specific_ticket_entry:
+                    print(self.title)
+                    self.show_ticket(specific_ticket_entry)
+                else:
+                    print("Weren't able to fetch specific ticket entry. Please try again\n")
 
 
-            print(self.re_entry_title)
-            entry = input("\n Enter your choice to proceed: ")
+                print(self.re_entry_title)
+                entry = input("\n Enter your choice to proceed: ")
 
-            if entry == "1":
-                continue
+                if entry == "1":
+                    continue
 
-            elif entry == "2":
-                print("Loading ...")
-                break
+                elif entry == "2":
+                    print("Loading ...")
+                    break
 
-            elif entry in ("3", "q", "Q"):
-                print("Quitting the viewer\n")
-                sys.exit()
+                elif entry in ("3", "q", "Q"):
+                    print("Quitting the viewer\n")
+                    sys.exit()
 
-            else:
-                print("Please enter an appropriate value. Going back\n")
-                time.sleep(3)
-                break
+                else:
+                    print("Please enter an appropriate value. Going back\n")
+                    time.sleep(3)
+                    break
+        except Exception as exp:
+            print(f"Request Failed with error {exp}. Please try again\n")
+
 
 
     def get_paged_tickets(self):
@@ -116,65 +121,77 @@ class Ticket:
         page_number = 1
         url = None
         end_flag = False
-        while True:
-            os.system('clear')
-            print(f"{'='* 20}")
-            print(self.title)
+        try:
 
-            ticket_data = self.get_json_token_obj.get_all_tickets_json(limit_per_page=Constants.TICKETS_PER_PAGE.value, page_specific_url=url)
+            while True:
+                os.system('clear')
+                print(f"{'='* 20}")
+                print(self.title)
 
-            tickets_entry = ticket_data.get("tickets", None)
-            if tickets_entry is None:
-                print("Error while retrieving tickets. Please try again")
-                break
+                ticket_data = self.get_json_token_obj.get_all_tickets_json(limit_per_page=Constants.TICKETS_PER_PAGE.value, page_specific_url=url)
 
-            self.display_tickets(tickets=tickets_entry)
+                if ticket_data == 404:
+                    print("Please enter an appropriate ticket id\n")
+                    continue
+                elif ticket_data == 401:
+                    print("Check the auth credentials")
+                    break
 
-            print(self.next_page_questions)
+                tickets_entry = ticket_data.get("tickets", None)
+                if tickets_entry is None:
+                    print("Error while retrieving tickets. Please try again")
+                    break
 
-            choice = input("\n Enter your choice: ")
+                self.display_tickets(tickets=tickets_entry)
 
-            if ticket_data['meta']['has_more']:
-                next_url = ticket_data['links'].get('next')
-                prev_url = ticket_data['links'].get('prev')
-                end_flag = False
-            else:
-                end_flag = True
+                print(self.next_page_questions)
 
-            if choice == "1":
-                if end_flag is True:
-                    print("No more pages to display. please re-enter options if you want to visit previous pages\n")
+                choice = input("\n Enter your choice: ")
+
+                if ticket_data['meta']['has_more']:
+                    next_url = ticket_data['links'].get('next')
+                    prev_url = ticket_data['links'].get('prev')
+                    end_flag = False
+                else:
+                    end_flag = True
+
+                if choice == "1":
+                    if end_flag is True:
+                        print("No more pages to display. please re-enter options if you want to visit previous pages\n")
+                        time.sleep(2)
+                    elif next_url is not None:
+                        print("Loading new page details:")
+                        url = next_url
+                        page_number += 1
+                    else:
+                        print("No more tickets are left to show")
+                        time.sleep(3)
+
+                elif choice == "2":
+                    if prev_url is not None and page_number > 1:
+                        print("Loading previous page details:")
+                        url = prev_url
+                        page_number -= 1
+                    else:
+                        print("Cannot go before the first page. Already in the first page. Choose options")
+                        time.sleep(3)
+
+                elif choice == "3":
+                    print("Returning to home page...")
                     time.sleep(2)
-                elif next_url is not None:
-                    print("Loading new page details:")
-                    url = next_url
-                    page_number += 1
+                    break
+
+                elif choice in ("4", "q", "Q"):
+                    print("Quitting the application")
+                    time.sleep(2)
+                    sys.exit()
+
                 else:
-                    print("No more tickets are left to show")
-                    time.sleep(3)
+                    print("Invalid selection, Please enter an appropriate option again")
+                    time.sleep(2)
 
-            elif choice == "2":
-                if prev_url is not None and page_number > 1:
-                    print("Loading previous page details:")
-                    url = prev_url
-                    page_number -= 1
-                else:
-                    print("Cannot go before the first page. Already in the first page. Choose options")
-                    time.sleep(3)
-
-            elif choice == "3":
-                print("Returning to home page...")
-                time.sleep(2)
-                break
-
-            elif choice in ("4", "q", "Q"):
-                print("Quitting the application")
-                time.sleep(2)
-                break
-
-            else:
-                print("Invalid selection, Please enter an appropriate option again")
-                time.sleep(2)
+        except Exception as exp:
+            print(f"Request Failed with error {exp}. Please try again")
 
 
 if __name__ == "__main__":

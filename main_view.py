@@ -46,14 +46,10 @@ class MainMenu():
                 choice = input("Enter your choice(1,2,3 or q/Q): ")
                 if choice == "1":
                     os.system('clear')
-
-                    # calls get_all_tickets from tickets.py file to receive all tickets
                     tickets.get_paged_tickets()
 
                 elif choice == "2":
                     os.system('clear')
-
-                    # calls get_ticket from tickets.py file to get a single ticket
                     tickets.get_specific_ticket_handler()
 
                 elif choice in ("3", "q", "Q"):
@@ -74,5 +70,4 @@ class MainMenu():
 if __name__ == '__main__':
     tickets = Ticket()
     main_menu_obj = MainMenu()
-    print(main_menu_obj)
     main_menu_obj.menu()

@@ -30,11 +30,12 @@ class ReadConfig:
             return self.config_dict
 
         except Exception as exp:
-            print(f"File {Constants.CONFIG_FILE.value} might not be present")
-            print(f"Exception raised while reading config file: {exp}")
+            print(f"Make sure {Constants.CONFIG_FILE.value} file is present with correct details and psd is in base64 encoded format")
+            print(f"Exception raised while reading config file")
+            raise
 
 
-class GetTicketJson():
+class GetTicketJson:
 
     def __init__(self):
         self.read_config_object = ReadConfig()
@@ -60,9 +61,9 @@ class GetTicketJson():
             elif response.status_code == 404:
                 print("Requested records not found")
                 return 404
-            elif response.status_code == 400:
+            elif response.status_code == 401:
                 print("Unauthorized, please check if your credentials are correct")
-                return 400
+                return 401
             else:
                 print("Request failed. Please check and try again\n")
                 time.sleep(3)
@@ -70,6 +71,7 @@ class GetTicketJson():
 
         except Exception as exp:
             print(f"Exception raised while calling Zendesk API: {exp}")
+            raise
 
     def get_specific_ticket_json(self, id):
         """
@@ -89,15 +91,16 @@ class GetTicketJson():
             elif response.status_code == 404:
                 print("Requested record not found")
                 return 404
-            elif response.status_code == 400:
+            elif response.status_code == 401:
                 print("Unauthorized, please check if your credentials are correct")
-                return 400
+                return 401
             else:
                 print("Request failed. Please check and try again\n")
                 time.sleep(3)
 
         except Exception as exp:
             print(f"Exception raised while calling Zendesk API for a specific ticket: {exp}")
+            raise
 
 
 if __name__ == "__main__":
