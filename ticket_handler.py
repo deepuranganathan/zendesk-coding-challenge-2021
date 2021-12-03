@@ -37,14 +37,11 @@ class Ticket:
         assigned_by = str(ticket['assignee_id'])
         subject = ticket['subject']
 
-        # gets created_at from data json and formats into date format
-        # and then converts into strings
         created_at = str(datetime.strptime(
             ticket['created_at'], '%Y-%m-%dT%H:%M:%SZ'))
         string = "{:{fill}{align}{width}}"
 
-        # passing format codes as arguments to format
-        # the output easily readable
+        # reference https://docs.python.org/3/tutorial/inputoutput.html
         print(string.format(
             ticket_id, fill='', align='<', width=13) + string.format(
             subject, fill='', align='<', width=50) +
@@ -129,6 +126,8 @@ class Ticket:
                 print(self.title)
 
                 ticket_data = self.get_json_token_obj.get_all_tickets_json(limit_per_page=Constants.TICKETS_PER_PAGE.value, page_specific_url=url)
+
+                print(ticket_data)
 
                 if ticket_data == 404:
                     print("Please enter an appropriate ticket id\n")

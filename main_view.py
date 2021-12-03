@@ -22,6 +22,7 @@ class MainMenu():
         Quitting from the viewer
         Thanks for visiting
         """
+        self.tickets = Ticket()
 
     def __str__(self):
         return "Main menu object to view main menu and the interactions to the ticket viewer"
@@ -46,11 +47,11 @@ class MainMenu():
                 choice = input("Enter your choice(1,2,3 or q/Q): ")
                 if choice == "1":
                     os.system('clear')
-                    tickets.get_paged_tickets()
+                    self.tickets.get_paged_tickets()
 
                 elif choice == "2":
                     os.system('clear')
-                    tickets.get_specific_ticket_handler()
+                    self.tickets.get_specific_ticket_handler()
 
                 elif choice in ("3", "q", "Q"):
                     print(self.quit_message)
@@ -68,6 +69,5 @@ class MainMenu():
 
 
 if __name__ == '__main__':
-    tickets = Ticket()
     main_menu_obj = MainMenu()
     main_menu_obj.menu()
