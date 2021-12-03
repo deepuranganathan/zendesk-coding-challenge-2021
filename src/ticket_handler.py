@@ -127,8 +127,6 @@ class Ticket:
 
                 ticket_data = self.get_json_token_obj.get_all_tickets_json(limit_per_page=Constants.TICKETS_PER_PAGE.value, page_specific_url=url)
 
-                print(ticket_data)
-
                 if ticket_data == 404:
                     print("Please enter an appropriate ticket id\n")
                     continue
